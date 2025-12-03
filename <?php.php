@@ -33,16 +33,17 @@ function CadastrarCliente(&$clientes): bool {
 
 function menu(){
 
-    print "=========== Opções ===========";
-    print "= 1 - cadastrar cliente      =";
-    print "= 2 - cadastrar conta        =";
-    print "= 3 - depositar              =";
-    print "= 4 - sacar                  =";
-    print "= 5 - Consultar saldo        =";
-    print "= 6 - Consultar extrato      =";
-    print "= 7 - sair                   =";
-    print "==============================";
+    print "\n=========== Opções ===========";
+    print "\n= 1 - cadastrar cliente      =";
+    print "\n= 2 - cadastrar conta        =";
+    print "\n= 3 - depositar              =";
+    print "\n= 4 - sacar                  =";
+    print "\n= 5 - Consultar saldo        =";
+    print "\n= 6 - Consultar extrato      =";
+    print "\n= 7 - sair                   =";
+    print "\n==============================\n";
 
+ 
 }
 
 function CadastrarConta( array &$clientes){
@@ -67,7 +68,7 @@ function CadastrarConta( array &$clientes){
 
     ];
 
-    print("Conta criada com sucesso.");
+    print("Conta criada com sucesso.$NumConta");
 
 }
 
@@ -96,14 +97,91 @@ function depositar(array &$clientes){
 
 }
 
-function Banco(){
-    menu();
-    
+function sacar( array &$clientes){
+
+    $cpf = readline("Informe o seu cpf:");
+
+    $conta = readline("Informe o numero de conta:");
+
+    $valorSaque = readline("Informe valor de saque:");
+
+    if($clientes[$cpf]['contas'][$conta]['saldo'] + CHEQUE_ESPECIAL >= $valorSaque){
+
+        $clientes[$cpf]['contas'][$conta]['saldo'] -= $valorSaque;
+
+    }
 }
-CadastrarCliente($clientes);
-CadastrarConta($clientes);
 
-print_r($clientes);
+$fim=false;
 
-depositar($clientes);
-print_r($clientes);
+do{
+
+   menu();
+
+    $escolha = readline("escolha:");
+
+        switch($escolha){
+
+            case 1:
+
+                CadastrarCliente($clientes);
+                
+                $fim = false;
+
+            break;
+
+            case 2:
+
+                CadastrarConta($clientes);
+            
+            break;
+
+            case 3:
+
+                depositar($clientes);
+
+            break;
+
+            case 4:
+
+                sacar($clientes);
+
+            break;
+
+            case 5:
+
+                $cpf = readline("qual seu cpf");
+
+                $numconta = readline("numero de conta");
+
+                print ("seu saldo atual: ".$clientes[$cpf]['contas'][$numconta]['saldo']);
+
+            break;
+
+            case 6:
+
+                $cpf = readline("qual seu cpf");
+
+                $numconta = readline("numero de conta");
+
+                print ("seu saldo atual: ".$clientes[$cpf]['contas'][$numconta]['extrato']);
+
+            break;
+
+            case 7:
+
+                print("fechando programa");
+
+                $fim = true;
+
+            break;
+
+            default:
+                
+                print("opção invalida");
+
+            break;
+
+        }
+
+    }while($fim==false);
