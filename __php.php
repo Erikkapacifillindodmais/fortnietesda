@@ -48,13 +48,13 @@ function menu(){
 
 function CadastrarConta( array &$clientes){
 
-    $cpf = readline("Informe seu CPF:");
+    $cpf = readline("Informe seu CPF: ");
 
     if (!isset($clientes[$cpf])){
 
         print("cliente não possui cadastro");
 
-        return;
+        return false;
 
     }
 
@@ -68,17 +68,34 @@ function CadastrarConta( array &$clientes){
 
     ];
 
-    print("Conta criada com sucesso.$NumConta");
+    print("Conta criada com sucesso. $NumConta");
 
 }
 
 function depositar(array &$clientes){
 
-    $cpf =readline("Informe seu CPF novamnete.");
+    $cpf = readline("Informe seu CPF novamente: ");
 
-    $NumConta = readline("informe numero de conta");
+    if(!isset($clientes[$cpf])){
 
-    $ValorDeposito = (float) readline("Informe valor do deposito.");
+        print("Este cpf não está cadastrado.");
+
+        return false;
+
+    }
+
+    $Numconta = readline("informe numero de conta: ");
+
+    if(!isset($clientes[$cpf]['contas'][$Numconta])){
+
+        print("Esta conta não está cadastrada.");
+
+        return false;
+
+    }
+
+
+    $ValorDeposito = (float) readline("Informe valor do deposito: ");
 
     if ($ValorDeposito <= 0){
         print ("Valor de deposito invalido.");
@@ -86,10 +103,10 @@ function depositar(array &$clientes){
         return false;
     }
 
-    $clientes[$cpf]['contas'][$NumConta]['saldo'] += $ValorDeposito;
+    $clientes[$cpf]['contas'][$Numconta]['saldo'] += $ValorDeposito;
 
     $datahora = date("d/m/Y H : i");
-    $clientes[$cpf]['contas'][$NumConta]['extrato'][] = "Deposito de R$ $ValorDeposito em $datahora";
+    $clientes[$cpf]['contas'][$Numconta]['extrato'][] = "Deposito de R$ $ValorDeposito em $datahora";
 
     print "Deposito realizado com sucesso";
 
@@ -101,21 +118,105 @@ function sacar( array &$clientes){
 
     $cpf = readline("Informe o seu cpf:");
 
-    $conta = readline("Informe o numero de conta:");
+    if(!isset($clientes[$cpf])){
+
+        print("Este cpf não está cadastrado.");
+
+        return false;
+
+    }
+
+    $Numconta = readline("Informe o numero de conta:");
+
+    if(!isset($clientes[$cpf]['contas'][$Numconta])){
+
+        print("Esta conta não está cadastrada.");
+
+        return false;
+
+    }
 
     $valorSaque = readline("Informe valor de saque:");
 
-    if($clientes[$cpf]['contas'][$conta]['saldo'] + CHEQUE_ESPECIAL >= $valorSaque){
+    if($clientes[$cpf]['contas'][$Numconta]['saldo'] + CHEQUE_ESPECIAL >= $valorSaque){
 
-        $clientes[$cpf]['contas'][$conta]['saldo'] -= $valorSaque;
+        $clientes[$cpf]['contas'][$Numconta]['saldo'] -= $valorSaque;
+
+    }else{
+
+        print("Valor de saque invalido.");
+
+        return false;
 
     }
 
 
     $datahora = date("d/m/Y H : i");
-    //$clientes[$cpf]['contas'][$NumConta]['extrato'][] = "Deposito de R$ $ValorDeposito em $datahora";
+    $clientes[$cpf]['contas'][$Numconta]['extrato'][] = "Saque de R$ $valorSaque em $datahora";
 
     print "Saque realizado com sucesso";
+}
+
+function MostrarSaldo(&$clientes){
+
+    $cpf = readline("qual seu cpf: ");
+
+    if(!isset($clientes[$cpf])){
+
+        print("Este cpf não está cadastrado.");
+
+        return false;
+
+    }
+
+    $numconta = readline("Informe o numero de conta: ");
+
+    if(!isset($clientes[$cpf]['contas'][$numconta])){
+
+        print("Esta conta não está cadastrada.");
+
+        return false;
+
+    }
+
+    print ("seu saldo atual: ".$clientes[$cpf]['contas'][$numconta]['saldo']);
+
+}
+
+function MostrarExtrato(&$clientes){
+
+    $cpf = readline("qual seu cpf: ");
+
+    if(!isset($clientes[$cpf])){
+
+        print("Este cpf não está cadastrado.");
+
+        return false;
+
+    }
+
+    $numconta = readline("Informe o numero de conta: ");
+
+    if(!isset($clientes[$cpf]['contas'][$numconta])){
+
+        print("Esta conta não está cadastrada.");
+
+        return false;
+
+    }
+
+    foreach ($clientes[$cpf]['contas'][$numconta]['extrato'] as $item_extrato) {
+
+        print $item_extrato . "\n";
+
+    }
+
+    // $quantidade_intens = count($clientes[$cpf]['contas'][$numconta]['extrato']);
+
+    // for ($i=0; $i < $quantidade_intens; $i++) { 
+    //     print $clientes[$cpf]['contas'][$numconta]['extrato'][$i] . "\n";
+    // }
+
 }
 
 $fim=false;
@@ -131,15 +232,13 @@ do{
             case 1:
 
                 CadastrarCliente($clientes);
-                
-                $fim = false;
 
             break;
 
             case 2:
 
                 CadastrarConta($clientes);
-            
+
             break;
 
             case 3:
@@ -156,34 +255,14 @@ do{
 
             case 5:
 
-                $cpf = readline("qual seu cpf");
-
-                $numconta = readline("numero de conta");
-
-                print ("seu saldo atual: ".$clientes[$cpf]['contas'][$numconta]['saldo']);
+                MostrarSaldo($clientes);
 
             break;
 
             case 6:
 
+                MostrarExtrato($clientes);
 
-                $cpf = readline("qual seu cpf");
-
-                $numconta = readline("numero de conta");
-
-
-                foreach ($clientes[$cpf]['contas'][$numconta]['extrato'] as $item_extrato) {
-                   print $item_extrato . "\n";
-                }
-
-                // $quantidade_intens = count($clientes[$cpf]['contas'][$numconta]['extrato']);
-
-                // for ($i=0; $i < $quantidade_intens; $i++) { 
-                //     print $clientes[$cpf]['contas'][$numconta]['extrato'][$i] . "\n";
-                // }
-
-
-                print ("seu saldo atual: ".$extrato);
 
             break;
 
